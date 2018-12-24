@@ -6,8 +6,11 @@
 
 The KUKA KR 210 industrial robot arm is a high payload solution for serious industrial applications. With a high payload of 210 kg and a massive reach of 2700 mm, the KR 210 KR C2 robot is ideal for a foundry setting. In fact, a foundry wrist with IP 67 protection is available with the KR 210 KR C2 instead of the standard IP 65 wrist. (photo and text  www.[robots.com](https://www.robots.com/robots/kuka-kr-210))
 
+To view of a snippet of how this project run, go to this link.  [![Kinematics Youtube recoding](./misc_images/Youtube.PNG)](https://www.youtube.com/watch?v=y9-X7LLv0Qs)
 
-### A.  Create a Catkin Workspace
+### A.  Create a Catkin Works()pace
+
+
 
 1. Download the VM provided by Udacity
 
@@ -432,4 +435,4 @@ $ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 $ rosrun kuka_arm IK_server.py
 ```
 #### F. Final thoughts
-This has been my first "academic" paper in over 25 years.  I am late in completing this project, since this project requires a good knowledge of python, numpy, forward/inverse kinematics, linear algebra and trigonometry.  The only thing I know on those prerequisites are linear algebra and trig.  I have to catch up on the rest.  I'll visit the code later for further efficiency because sometimes the robot looks like it's drunk.
+This has been my first "academic" paper in over 25 years.  I am late in completing this project, since this project requires a good knowledge of python, numpy, forward/inverse kinematics, linear algebra and trigonometry.  The only thing I know on those prerequisites are linear algebra and trig.  I have to catch up on the rest.  It would also help if you know git and markdown format before you take on this course.  I'll visit the code later for further efficiency because sometimes the robot looks like it's drunk.
