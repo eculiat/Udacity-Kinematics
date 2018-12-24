@@ -432,4 +432,4 @@ $ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 $ rosrun kuka_arm IK_server.py
 ```
 #### F. Final thoughts
-This has been my first "academic" paper in over 25 years.  I am late in completing this project, since this project requires a good knowledge of python, numpy, kinematic, linear algebra and trigonometry.  The only thing I know on those prerequisites are linear algebra and trig.  I have to catch up on the rest.  I'll visit the code later for further efficiency because sometimes the robot looks like its drunk.
+This has been my first "academic" paper in over 25 years.  I am late in completing this project, since this project requires a good knowledge of python, numpy, forward/inverse kinematics, linear algebra and trigonometry.  The only thing I know on those prerequisites are linear algebra and trig.  I have to catch up on the rest.  I'll visit the code later for further efficiency because sometimes the robot looks like it's drunk.
