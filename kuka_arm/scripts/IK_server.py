@@ -41,7 +41,7 @@ def handle_calculate_IK(req):
     	# DH params definitions
    	# Link offsets d
     	d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
-    
+
 	# Link lengths
     	a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
 
@@ -106,7 +106,7 @@ def handle_calculate_IK(req):
     	    ROT_x = Matrix([[1,      0,        0],
                     [0, +cos(r), -sin(r)],
                     [0, +sin(r), +cos(r)]])
-    	
+
 	    # pitch
     	    ROT_y = Matrix([[+cos(p), 0, +sin(p)],
                     [0,       1,       0],
@@ -159,16 +159,12 @@ def handle_calculate_IK(req):
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables
 	    joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
 	    joint_trajectory_list.append(joint_trajectory_point)
-            
+
         rospy.loginfo("length of Joint Trajectory List: %s" % len(joint_trajectory_list))
         return CalculateIKResponse(joint_trajectory_list)
 
     ##
     ########################################################################################
-
-
-
-
 
 
 def IK_server():
