@@ -289,21 +289,21 @@ There is no loopback implemented yet, so you need to close all the terminal wind
    ![](./misc_images/gripperlinkframe2.PNG)
 
    #### Python Code
-     1.  Import libraries
+  1.  Import libraries
      ```
        import numpy as np
        from numpy import array
        from sympy import symbols, cos, sin, pi, simplify, sqrt, atan2
        from sympy.matrices import Matrix
      ```
-     2.  Create symbols for joint variables
+  2.  Create symbols for joint variables
      ```
      q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
      d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
      a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
      alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')
      ```
-     3. DH Parameters
+  3. DH Parameters
      ```
        DH_Table = {
             alpha0:  0    , a0:  0    , d1:  0.75 , q1:      q1,
@@ -319,7 +319,7 @@ There is no loopback implemented yet, so you need to close all the terminal wind
            b = link offset,
            q = joint variables
 
-     4. Modified Homogeneous transforms
+  4. Modified Homogeneous transforms
      ```
      def TF_Matrix(alpha, a, d, q):
        TF = Matrix([[cos(q)           , -sin(q)           , 0          , a            ],
@@ -339,7 +339,7 @@ There is no loopback implemented yet, so you need to close all the terminal wind
    T6_EE = TF_Matrix(alpha6, a6, d7, q7).subs(DH_Table)
    T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE
    ```  
-     5. Read EE Position and RPY
+  5. Read EE Position and RPY
      ```
      px = req.poses[x].position.x
      py = req.poses[x].position.y
@@ -350,7 +350,7 @@ There is no loopback implemented yet, so you need to close all the terminal wind
                           req.poses[x].orientation.z,
                           req.poses[x].orientation.w])
      ```
-     6. EE rotation Matrix
+  6. EE rotation Matrix
      ```
      r, p, y = symbols('r p y')
      # roll
@@ -367,7 +367,7 @@ There is no loopback implemented yet, so you need to close all the terminal wind
                    [      0,       0, 1]])
      ROT_EE = ROT_z * ROT_y * ROT_x
      ```
-     7.  EE rotation adjust
+  7.  EE rotation adjust
      ```
      Rot_Error = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
      ROT_EE = ROT_EE * Rot_Error
@@ -379,32 +379,43 @@ There is no loopback implemented yet, so you need to close all the terminal wind
 
      WC = EE - 0.303 * ROT_EE[:,2]
      ```
-     8.  IK -> Calculate joint Angles
+  8.  IK -> Calculate joint Angles
    ```
-     theta1 = atan2(WC[1], WC[0])
+   theta1 = atan2(WC[1],WC[0])
 
-     side_a = 1.501
-     side_b = sqrt(pow(sqrt(WC[0]*WC[0]+WC[1]*WC[1])-0.35, 2) + pow((WC[2]-0.75), 2))
-     side_c = 1.25
+   # find the 3rd side of the triangle
+   A = 1.501
+   C = 1.25
+   B = sqrt(pow((sqrt(WC[0]*WC[0] + WC[1]*WC[1]) - 0.35), 2) + pow((WC[2] - 0.75), 2))
 
-     angle_a = acos((side_b*side_b+side_c*side_c-side_a*side_a)/(2*side_b*side_c))
-     angle_b = acos((side_a*side_a+side_c*side_c-side_b*side_b)/(2*side_a*side_c))
-     angle_c = acos((side_a*side_a+side_b*side_b-side_c*side_c)/(2*side_a*side_b))
+   #Cosine Laws SSS to find all inner angles of the triangle
+   a = acos((B*B + C*C - A*A) / (2*B*C))
+   b = acos((A*A + C*C - B*B) / (2*A*C))
+   c = acos((A*A + B*B - C*C) / (2*A*B))
 
-     theta2 = pi/2. - angle_a - atan2(WC[2]-0.75, sqrt(WC[0]*WC[0]+WC[1]*WC[1]) - 0.35)
-     theta3 = pi/2. - (angle_b + 0.036)  # 0.036 accounts for sag in link 4 of -0.054
+   #Find theta2 and theta3
+   theta2 = pi/2 - a - atan2(WC[2]-0.75, sqrt(WC[0]*WC[0]+WC[1]*WC[1])-0.35)
+   theta3 = pi/2 - (b+0.036) # 0.036 accounts for sag in link4 of -0.054m
 
-     R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
-     R0_3 = R0_3.evalf(subs={q1:theta1, q2:theta2, q3:theta3})
+   # Extract rotation matrix R0_3 from transformation matrix T0_3 the substitute angles q1-3
+   R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
+   R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3:theta3})
 
-     R3_6 = R0_3.inv("LU") * ROT_EE
+   # Get rotation matrix R3_6 from (transpose of R0_3 * R_EE)
+   R3_6 = R0_3.transpose() * ROT_EE
    ```  
      9 Euler Angles
-     ```
-     theta4 = atan2(R3_6[2,2], -R3_6[0,2])
-     theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2]+R3_6[2,2]*R3_6[2,2]), R3_6[1,2])
-     theta6 = atan2(-R3_6[1,1], R3_6[1,0])  
-     ```
+  ```
+     theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]),R3_6[1,2])
+
+     # select best solution based on theta5
+     if (theta5 > pi) :
+         theta4 = atan2(-R3_6[2,2], R3_6[0,2])
+         theta6 = atan2(R3_6[1,1],-R3_6[1,0])
+     else:
+         theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+         theta6 = atan2(-R3_6[1,1],R3_6[1,0])
+```
 #### E. Final Step
 
 1. Insert kinematics code to IK_server.py located in the `~\catkin_ws\src\RoboND-Kinematics-Project\kuka_arm\script`
@@ -420,3 +431,5 @@ $ ./safe_spawner.sh
 $ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 $ rosrun kuka_arm IK_server.py
 ```
+#### F. Final thoughts
+This has been my first "academic" paper in over 25 years.  I am late in completing this project, since this project requires a good knowledge of python, numpy, kinematic, linear algebra and trigonometry.  The only thing I know on those prerequisites are linear algebra and trig.  I have to catch up on the rest.  I'll visit the code later for further efficiency because sometimes the robot looks like its drunk.
