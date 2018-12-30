@@ -8,7 +8,7 @@ The KUKA KR 210 industrial robot arm is a high payload solution for serious indu
 
 To view of a snippet of how this project run, go to this link.  [![Kinematics Youtube recoding](./misc_images/Youtube.PNG)](https://www.youtube.com/watch?v=y9-X7LLv0Qs)
 
-### A.  Create a Catkin Works()pace
+### A.  Create a Catkin Workspace
 
 
 
