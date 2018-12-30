@@ -16,7 +16,7 @@ To view of a snippet of how this project run, go to this link.  [![Kinematics Yo
 
 2. Create a top level catkin workspace directory and a sub-directory named `src`
 ```
-mkdir -p ~/catkin/src
+mkdir -p ~/catkin_ws/src
 ```
 3. Navigate to the `src`
 ```
@@ -32,7 +32,7 @@ Notice that a symbolic link (`CMakeLists.txt`) has been created to
 
 5. Return to the top level directory
 ```
-cd ~\catkin_ws
+cd ~/catkin_ws
 ```
 6.  Build the Workspace
 ```
